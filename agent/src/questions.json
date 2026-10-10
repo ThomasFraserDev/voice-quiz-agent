@@ -1,0 +1,114 @@
+[
+  {
+    "id": "ea_001",
+    "topic": "evolutionary algorithms",
+    "difficulty": 1,
+    "question": "What are the four main stages of a generic Evolutionary Algorithm, in the correct order?",
+    "answer": "Selection, variation, population update, and repeat.",
+    "acceptable_answers": [
+      "Selection -> variation -> population update -> repeat."
+    ],
+    "explanation": "Selection chooses individuals, variation creates new candidates, and population update determines the next population before the process repeats."
+  },
+  {
+    "id": "ea_002",
+    "topic": "evolutionary algorithms",
+    "difficulty": 1,
+    "question": "What is the purpose of a fitness function in an Evolutionary Algorithm?",
+    "answer": "To measure how good a candidate solution is.",
+    "acceptable_answers": [
+      "Evaluate the quality of a candidate solution.",
+      "Assign a fitness value to each individual."
+    ],
+    "explanation": "Fitness values are used to compare solutions and guide selection."
+  },
+  {
+    "id": "ea_003",
+    "topic": "evolutionary algorithms",
+    "difficulty": 2,
+    "question": "What is the difference between a chromosome, a gene, an allele, and a locus?",
+    "answer": "A chromosome is an encoded solution structure, a gene is a feature, an allele is the value of a gene, and a locus is the gene's position.",
+    "acceptable_answers": [
+      "Chromosome = solution structure; gene = feature; allele = value; locus = position."
+    ],
+    "explanation": "These terms describe the structure and encoding of an individual in an Evolutionary Algorithm."
+  },
+  {
+    "id": "ea_004",
+    "topic": "evolutionary algorithms",
+    "difficulty": 2,
+    "question": "What is the difference between a global optimum and a local optimum?",
+    "answer": "A global optimum is the best solution across the entire search space, while a local optimum is the best solution within a particular region.",
+    "acceptable_answers": [
+      "Global = best overall; local = best in a region."
+    ],
+    "explanation": "An algorithm may find a local optimum without finding the best solution in the entire search space."
+  },
+  {
+    "id": "ea_005",
+    "topic": "fitness functions",
+    "difficulty": 2,
+    "question": "What are the characteristics of unimodal, multimodal, and plateau fitness landscapes?",
+    "answer": "Unimodal has one main optimum, multimodal has multiple optima, and a plateau has a flat region of similar fitness values.",
+    "acceptable_answers": [
+      "Unimodal = one optimum; multimodal = multiple optima; plateau = flat fitness region."
+    ],
+    "explanation": "These landscape types describe different optimisation challenges an algorithm may encounter."
+  },
+  {
+    "id": "ea_006",
+    "topic": "evolutionary algorithms",
+    "difficulty": 2,
+    "question": "What is the difference between exploration and exploitation in an Evolutionary Algorithm?",
+    "answer": "Exploration searches new areas of the search space, while exploitation focuses on improving promising solutions.",
+    "acceptable_answers": [
+      "Exploration = searching new areas; exploitation = refining good solutions."
+    ],
+    "explanation": "Balancing both helps prevent premature convergence while still making progress towards better solutions."
+  },
+  {
+    "id": "ea_007",
+    "topic": "evolutionary algorithms",
+    "difficulty": 2,
+    "question": "What is crossover, and why is it useful in Evolutionary Algorithms?",
+    "answer": "Crossover combines genetic information from multiple parent solutions to produce offspring.",
+    "acceptable_answers": [
+      "Combining parts of parent chromosomes to create new solutions.",
+      "Recombining information from different individuals."
+    ],
+    "explanation": "Crossover allows useful characteristics from different solutions to be combined."
+  },
+  {
+    "id": "ea_008",
+    "topic": "evolutionary algorithms",
+    "difficulty": 2,
+    "question": "What does anytime behaviour mean in an Evolutionary Algorithm, and what are two common disadvantages of EAs?",
+    "answer": "Anytime behaviour means a usable best-so-far solution is available during execution. Disadvantages include parameter tuning and potentially long execution times.",
+    "acceptable_answers": [
+      "It can provide a solution at any point; it may be slow and require parameter tuning."
+    ],
+    "explanation": "EAs can be stopped early to obtain a current solution, but may need many fitness evaluations and careful configuration."
+  },
+  {
+    "id": "ea_009",
+    "topic": "hill climbing",
+    "difficulty": 2,
+    "question": "What are the main steps of hill climbing, in the correct order?",
+    "answer": "Generate an initial solution, evaluate it, make a small random change, evaluate the new solution, keep it if better, and repeat.",
+    "acceptable_answers": [
+      "Initialise, evaluate, perturb, evaluate again, accept improvements, repeat."
+    ],
+    "explanation": "Basic hill climbing repeatedly makes local changes and accepts improvements, but can become stuck at a local optimum."
+  },
+  {
+    "id": "ea_010",
+    "topic": "hill climbing",
+    "difficulty": 3,
+    "question": "How do simulated annealing, tabu search, and multi-start local search each help overcome the limitations of basic hill climbing?",
+    "answer": "Simulated annealing occasionally accepts worse moves; tabu search remembers recently visited areas or moves; multi-start local search restarts from different initial solutions.",
+    "acceptable_answers": [
+      "Annealing accepts downhill moves, tabu search uses memory, and multi-start search uses new starting points."
+    ],
+    "explanation": "Each method encourages the search to escape local optima or explore different regions of the search space."
+  }
+]
