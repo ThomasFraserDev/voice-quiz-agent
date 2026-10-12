@@ -55,7 +55,7 @@ def load_questions(file_path: str | Path = QUESTIONS_FILE) -> list[dict[str, Any
                 f"{', '.join(sorted(missing))}"
             )
 
-        for field in REQUIRED_FIELDS - {"acceptable_answers"}:
+        for field in REQUIRED_FIELDS - {"acceptable_answers", "difficulty"}:
             if not isinstance(question[field], str) or not question[field].strip():
                 raise ValueError(
                     f"{label}: '{field}' must be a non-empty string."
