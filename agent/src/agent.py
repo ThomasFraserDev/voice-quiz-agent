@@ -10,7 +10,8 @@ from livekit.agents import (
     JobContext,
     TurnHandlingOptions,
     cli,
-    inference,
+    function_tool,
+    inference
 )
 
 load_dotenv(".env.local")
@@ -89,6 +90,38 @@ class Assistant(Agent):
                 Ask one question at a time.
             """,
         )
+        
+    @function_tool()
+    async def get_next_question(self) -> str: # Method for getting next question
+
+        question = self.quiz.next_question()
+
+        if question is None: # If no more questions remain, denote the quiz as finished
+            return json.dumps({
+                "finished": True,
+                "message": "The quiz is finished. No more questions remain.",
+            })
+
+        return json.dumps({
+            "finished": False,
+            "question": question,
+        })
+
+    @function_tool()
+    async def submit_answer(self, user_answer: str) -> str: # Method for submitting and checking user answer
+
+        try: # Try submit the user answer
+            result = self.quiz.submit_answer(user_answer)
+        except (RuntimeError, ValueError) as exc:
+            return json.dumps({"error": str(exc)})
+
+        return json.dumps(result)
+
+    @function_tool()
+    async def get_quiz_summary(self) -> str: # Method for getting a summary of the quiz
+        
+        return json.dumps(self.quiz.get_summary())
+
 
 server = AgentServer()
 
