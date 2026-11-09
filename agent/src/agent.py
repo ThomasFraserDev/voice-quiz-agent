@@ -1,3 +1,4 @@
+
 import json
 import logging
 from pathlib import Path
@@ -21,7 +22,7 @@ load_dotenv(".env.local")
 
 logger = logging.getLogger("agent")
 
-QUESTIONS_FILE = Path(__file__).parent / "questions.json"  # Path for questions json
+QUESTIONS_FILE = Path(__file__).parent / "questions.json"
 
 REQUIRED_FIELDS = {
     "id",
@@ -36,16 +37,15 @@ REQUIRED_FIELDS = {
 
 def load_questions(
     file_path: str | Path = QUESTIONS_FILE,
-) -> list[dict[str, Any]]:  # Load questions from json
+) -> list[dict[str, Any]]:
+
     path = Path(file_path)
 
-    with path.open("r", encoding="utf-8") as file:  # Read json file
+    with path.open("r", encoding="utf-8") as file:
         questions = json.load(file)
 
     if not isinstance(questions, list):
-        raise ValueError(  # Raise error if questions not in a json format
-            "Questions must be a JSON array"
-        )
+        raise ValueError("Questions must be a JSON array")
 
     seen_ids = set()
 
@@ -57,13 +57,18 @@ def load_questions(
 
         missing = REQUIRED_FIELDS - question.keys()
         if missing:
-            raise ValueError(f"{label} is missing fields: {', '.join(sorted(missing))}")
+            raise ValueError(
+                f"{label} is missing fields: {', '.join(sorted(missing))}"
+            )
 
         for field in REQUIRED_FIELDS - {"acceptable_answers", "difficulty"}:
             if not isinstance(question[field], str) or not question[field].strip():
-                raise ValueError(f"{label}: '{field}' must be a non-empty string.")
+                raise ValueError(
+                    f"{label}: '{field}' must be a non-empty string."
+                )
 
         answers = question["acceptable_answers"]
+
         if not isinstance(answers, list) or not all(
             isinstance(answer, str) for answer in answers
         ):
@@ -72,6 +77,7 @@ def load_questions(
             )
 
         question_id = question["id"]
+
         if question_id in seen_ids:
             raise ValueError(f"{label} has duplicate ID: {question_id!r}")
 
@@ -81,11 +87,16 @@ def load_questions(
 
 
 class Assistant(Agent):
+
     def __init__(self, questions: list[dict[str, Any]]):
+
         self.quiz = QuizEngine(questions)
 
         super().__init__(
-            llm=inference.LLM(model="google/gemma-4-31b-it"),
+            llm=inference.LLM(
+                model="openai/gpt-4.1-mini"
+            ),
+
             instructions="""
                 You are a friendly voice quiz tutor.
 
@@ -111,31 +122,25 @@ class Assistant(Agent):
         )
 
     @function_tool()
-    async def get_next_question(self) -> str:  # Method for getting next question
+    async def get_next_question(self) -> str:
 
         question = self.quiz.next_question()
 
-        if question is None:  # If no more questions remain, denote the quiz as finished
-            return json.dumps(
-                {
-                    "finished": True,
-                    "message": "The quiz is finished. No more questions remain.",
-                }
-            )
+        if question is None:
+            return json.dumps({
+                "finished": True,
+                "message": "The quiz is finished. No more questions remain.",
+            })
 
-        return json.dumps(
-            {
-                "finished": False,
-                "question": question,
-            }
-        )
+        return json.dumps({
+            "finished": False,
+            "question": question,
+        })
 
     @function_tool()
-    async def submit_answer(
-        self, user_answer: str
-    ) -> str:  # Method for submitting and checking user answer
+    async def submit_answer(self, user_answer: str) -> str:
 
-        try:  # Try submit the user answer
+        try:
             result = self.quiz.submit_answer(user_answer)
         except (RuntimeError, ValueError) as exc:
             return json.dumps({"error": str(exc)})
@@ -143,7 +148,7 @@ class Assistant(Agent):
         return json.dumps(result)
 
     @function_tool()
-    async def get_quiz_summary(self) -> str:  # Method for getting a summary of the quiz
+    async def get_quiz_summary(self) -> str:
 
         return json.dumps(self.quiz.get_summary())
 
@@ -153,17 +158,24 @@ server = AgentServer()
 
 @server.rtc_session()
 async def my_agent(ctx: JobContext):
+
     logger.info("Starting agent in room %s", ctx.room.name)
 
     session = AgentSession(
+
+        # Deepgram speech recognition
         stt=inference.STT(
-            model="assemblyai/universal-3-6-pro",
+            model="deepgram/nova-3",
             language="en",
         ),
+
+        # Cartesia speech synthesis
         tts=inference.TTS(
             model="fishaudio/s2.1-pro",
             voice="fa4c9eb3dccc4806b382b40d61c6b10a",
         ),
+
+        # Keep existing LiveKit turn handling
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(),
             interruption={"mode": "adaptive"},
@@ -173,12 +185,16 @@ async def my_agent(ctx: JobContext):
     questions = load_questions()
     assistant = Assistant(questions)
 
+    await ctx.connect()
+
     await session.start(
         agent=assistant,
         room=ctx.room,
     )
 
-    await ctx.connect()
+    await session.generate_reply(
+        instructions="Greet the learner and ask the first quiz question."
+    )
 
 
 if __name__ == "__main__":
